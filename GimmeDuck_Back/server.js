@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+const pinata_key = require('./pinata_key');
 
 var cors = require('cors')
 app.use(cors());
@@ -8,10 +9,10 @@ app.use(bodyParser.urlencoded({ limit : "10mb", extended: true , parameterLimit 
 app.use(bodyParser.json({ limit : "10mb" , extended : true}))
 
 
-const mongooes = require('mongoose');
-mongooes.connect(config.mongoURI,{})
-.then(()=>console.log('MongoDB Connected..'))
-.catch(err => console.log(err));
+// const mongooes = require('mongoose');
+// mongooes.connect(config.mongoURI,{})
+// .then(()=>console.log('MongoDB Connected..'))
+// .catch(err => console.log(err));
 
 app.get('/egg', (req, res) => {
     User.findOne({ address : req.query.egg}, (err, user) => {
@@ -24,13 +25,15 @@ app.get('/egg', (req, res) => {
 })
 
 var fs = require('fs');
+const pinata_key = require('./pinata_key');
 
 const pinFileToIPFS = async function(image) {
+    var ipfshash;
 
     fs.writeFileSync('image.png', image.replace(/^data:image\/png;base64,/, ""), 'base64');
 
     const pinataSDK = require('@pinata/sdk');
-    const pinata = pinataSDK('71084a474f5f077b9699', '5d9f0655f5b4194f2e0bfac0eff6fe0005a242c8af72bed24cf78cb61619d7da');
+    const pinata = pinataSDK(pinata_key.pinata_api_key, pinata_key.pinata_secret_api_key);
 
     var i = 8;  //gimme_duck index
     var result_ = '';
@@ -76,6 +79,7 @@ const pinFileToIPFS = async function(image) {
         pinata.pinJSONToIPFS(body, options2).then((result2) => {
             console.log("JSON Uploaded!");
             console.log(result2);
+            ipfshash = result2;
         }).catch((err2) => {
             console.log(err2);
         });
@@ -84,11 +88,15 @@ const pinFileToIPFS = async function(image) {
         console.log(err);
     });
 
+    return ipfshash;
 } 
 
 app.post('/test', (req, res) => {
     const image = req.body.image;
-    pinFileToIPFS(image);
+    const result = await pinFileToIPFS(image);
+    console.log(result);
+
+    //res.send(ipfshash);
 });
 
 
