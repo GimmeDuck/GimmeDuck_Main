@@ -31,7 +31,7 @@ app.get("/egg", (req, res) => {
 
 var fs = require("fs");
 var ipfshash = "";
-
+let check = "";
 const pinFileToIPFS = async function (image) {
   
 
@@ -53,7 +53,7 @@ const pinFileToIPFS = async function (image) {
 
   const options = {
     pinataMetadata: {
-      name: "GIMMEDUCK_TEST" + i,
+      name: "GIMMEDUCK_main",
       keyvalues: {
         customKey: "gimmeduck_test" + i,
       },
@@ -72,7 +72,7 @@ const pinFileToIPFS = async function (image) {
 
       /*pin JSON to IPFS*/
       const body = {
-        name: "Gimme_duck" + i,
+        name: "Gimme_duck_main",
         description: "Gimme_duck upload practice!",
         image: "ipfs://" + result_,
         attributes: [{ trait_type: "Unknown", value: "Unknown" }],
@@ -80,7 +80,7 @@ const pinFileToIPFS = async function (image) {
 
       const options2 = {
         pinataMetadata: {
-          name: "GIMMEDUCK_TEST_JSON" + i,
+          name: "GIMMEDUCK_main_JSON",
           keyvalues: {
             customKey: "gimmeduck_test_json",
           },
@@ -97,6 +97,7 @@ const pinFileToIPFS = async function (image) {
           console.log(result2);
           //console.log(result2.IpfsHash);
           ipfshash = result2.IpfsHash;
+          check = result2.IpfsHash;
         })
         .catch((err2) => {
           console.log(err2);
@@ -111,9 +112,10 @@ app.post("/test", (req, res) => {
   const image = req.body.image;
   pinFileToIPFS(image);
   let interval = setInterval(function() {
-    if (ipfshash != "") {
+    if (ipfshash != "" && ipfshash === check) {
         res.send(ipfshash);
         clearInterval(interval);
+        check="";
     } 
   }, 1000);
 });
