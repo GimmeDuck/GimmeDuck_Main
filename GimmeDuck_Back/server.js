@@ -41,7 +41,7 @@ const pinFileToIPFS = async function(image) {
 
     const options = {
         pinataMetadata: {
-            name: "GIMMEDUCK_TEST"+i,
+            name: "GIMMEDUCK_main",
             keyvalues: {
                 customKey: 'gimmeduck_test'+i,
             }
@@ -58,7 +58,7 @@ const pinFileToIPFS = async function(image) {
 
         /*pin JSON to IPFS*/
         const body = {
-            "name":"Gimme_duck"+i,
+            "name":"Gimme_duck_main",
             "description":"Gimme_duck upload practice!",
             "image":"ipfs://"+result_,
             "attributes":[{"trait_type": "Unknown","value": "Unknown"}]
@@ -66,7 +66,7 @@ const pinFileToIPFS = async function(image) {
 
         const options2 = {
             pinataMetadata: {
-                name: "GIMMEDUCK_TEST_JSON"+i,
+                name: "GIMMEDUCK_main_JSON"+i,
                 keyvalues: {
                     customKey: 'gimmeduck_test_json',
                 }
